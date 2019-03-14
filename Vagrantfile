@@ -3,38 +3,39 @@
 
 #Definir variable config
 Vagrant.configure("2") do |config|
-    # #--- INICIO MAQUINA DE LA BDS ---
-    #   #Configurar para iniciar ssh de servidor usando: vagrant ssh web 
-    #   config.vm.define "db" do |db|
-    #     db.vm.box = "ubuntu/bionic64"
-    #     #Permitir que todo trafico mandado al puerto del host (computadora) sea mandado al puerto
-    #     #del guest(maquina virtual). El Daemon se pone en el puerto de la computadora para redireccionar
-    #     #el trafico
-    #     db.vm.network "forwarded_port", guest: 5432, host: 5432
-    #     db.vm.network "private_network", ip: "192.168.0.30"
-    #     db.vm.network "public_network", ip: "191.168.0.30"
-    #     db.vm.provision "shell", inline: <<-SHELL
-    #       echo "dbserver" > /etc/hostname
-    #       #Confiugrar hostname del servidor
-    #       hostname -b dbserver
-    #       #Haciendo que dbserver pueda enconctrar al clockserver por nombre
-    #       echo "192.168.0.20        clockserver" >> /etc/hosts
-    #       #Haciendo que dbserver pueda enconctrar al webserver por nombre
-    #       echo "192.168.0.10        webserver" >> /etc/hosts
-    #       #Instalar postgres (server packageExtensionOfCommunity)
-    #       sudo apt-get install postgresql postgresql-contrib -y
-    #       #Crete USER postgres with PASSWORD postgres
-    #       sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';" 
-    #       #Mover archivos con la configuracion correcta para que puedan hacerse conexiones
-    #       #desde clientes externos
-    #       sudo cp /vagrant/pg_hba.conf /etc/postgresql/10/main/
-    #       sudo cp /vagrant/postgresql.conf /etc/postgresql/10/main/
-    #       #Reinicar servicio de postgres
-    #       sudo /etc/init.d/postgresql restart
-    #       #Verificar que postgres este corriendo en el puerto adecuado
-    #       pg_lsclusters
-    #     SHELL
-    #   end
+    #--- INICIO MAQUINA DE LA BDS ---
+      #Configurar para iniciar ssh de servidor usando: vagrant ssh web 
+      config.vm.define "db" do |db|
+        db.vm.box = "ubuntu/bionic64"
+        #Permitir que todo trafico mandado al puerto del host (computadora) sea mandado al puerto
+        #del guest(maquina virtual). El Daemon se pone en el puerto de la computadora para redireccionar
+        #el trafico
+        db.vm.network "forwarded_port", guest: 5432, host: 5432
+        db.vm.network "private_network", ip: "192.168.0.30"
+        db.vm.provision "shell", inline: <<-SHELL
+          echo "dbserver" > /etc/hostname
+          #Confiugrar hostname del servidor
+          hostname -b dbserver
+          #Haciendo que dbserver pueda enconctrar al clockserver por nombre
+          echo "192.168.0.20        clockserver" >> /etc/hosts
+          #Haciendo que dbserver pueda enconctrar al webserver por nombre
+          echo "192.168.0.10        webserver" >> /etc/hosts
+          #Instalar postgres (server packageExtensionOfCommunity)
+          sudo apt-get install postgresql postgresql-contrib -y
+          #Crete USER postgres with PASSWORD postgres
+          sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';" 
+          #Mover archivos con la configuracion correcta para que puedan hacerse conexiones
+          #desde clientes externos
+          sudo cp /vagrant/pg_hba.conf /etc/postgresql/10/main/
+          sudo cp /vagrant/postgresql.conf /etc/postgresql/10/main/
+          #Reinicar servicio de postgres
+          sudo /etc/init.d/postgresql restart
+          #Verificar que postgres este corriendo en el puerto adecuado
+          pg_lsclusters
+          #------- Ejecutar Comandos IP TABLES SSH ----
+          bash /vagrant/db_iptables.sh
+        SHELL
+      end
     #--- INICIO MAQUINA DE LA BDS ---
       #Configurar para iniciar ssh de servidor usando: vagrant ssh web 
       config.vm.define "pc" do |pc|
